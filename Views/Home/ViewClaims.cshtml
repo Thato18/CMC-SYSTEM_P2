@@ -1,0 +1,133 @@
+﻿@model IEnumerable<CMC_SYSTEM.Models.Claim>
+
+@{
+    ViewBag.Title = "ViewClaims";
+}
+
+<h2>ViewClaims</h2>
+
+<p>
+    @Html.ActionLink("Create", "SubmitClaim", null, new { @class = "btn btn-primary" }) <!-- Modern button style -->
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.LecturerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HoursWorked)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HourlyRate)
+            </th>
+            <th>
+                Status <!-- Add a Status column header -->
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LecturerName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HoursWorked)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HourlyRate)
+                </td>
+                <td>
+                    @Html.DropDownListFor(modelItem => item.ClaimId, new SelectList(new[] { "Pending", "Approved", "Rejected" }), "Select Status", new { @class = "form-control", @onchange = "updateStatus(this)" }) <!-- Editable dropdown -->
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ClaimId }, new { @class = "btn btn-secondary btn-sm" }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ClaimId }, new { @class = "btn btn-info btn-sm" }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ClaimId }, new { @onclick = "return confirm('Are you sure you want to delete this?');", @class = "btn btn-danger btn-sm" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<style>
+    /* Modern table styling */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 1em;
+        font-family: Arial, sans-serif;
+        color: #fff;
+    }
+
+        .table th, .table td {
+            padding: 12px 15px;
+            border: 1px solid #dee2e6; /* Light gray border */
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #f8f9fa; /* Light gray background for header */
+            font-weight: bold;
+        }
+
+        .table tr:hover {
+            background-color: #f1f1f1; /* Slight hover effect */
+        }
+
+    /* Button styles */
+    .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        margin: 0 5px;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #fff;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+    .btn:hover {
+        opacity: 0.9; /* Hover effect for buttons */
+    }
+</style>
+
+<script type="text/javascript">
+    function updateStatus(dropdown) {
+        var claimId = dropdown.name; // ClaimId
+        var status = dropdown.value; // Selected status
+
+        // AJAX request to update the status
+        $.ajax({
+            url: '@Url.Action("UpdateStatus", "Claim")', // URL of your controller action
+            type: 'POST',
+            data: { id: claimId, status: status },
+            success: function (result) {
+                alert('Status updated successfully!');
+            },
+            error: function () {
+                alert('updating status!');
+            }
+        });
+    }
+</script>
